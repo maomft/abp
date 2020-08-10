@@ -115,7 +115,7 @@ public class MessagingHub : Hub
 }
 ````
 
-The hub route will be `/signalr-hubs/messasing` for the `MessasingHub`:
+The hub route will be `/signalr-hubs/messaging` for the `MessagingHub`:
 
 * Adding a standard `/signalr-hubs/` prefix
 * Continue with the **camel case** hub name, without the `Hub` suffix.
@@ -123,7 +123,7 @@ The hub route will be `/signalr-hubs/messasing` for the `MessasingHub`:
 If you want to specify the route, you can use the `HubRoute` attribute:
 
 ````csharp
-[HubRoute("/my-messasing-hub")]
+[HubRoute("/my-messaging-hub")]
 public class MessagingHub : Hub
 {
     //...
@@ -132,7 +132,7 @@ public class MessagingHub : Hub
 
 ### AbpHub Base Classes
 
-Instead of the standard `Hub` and `Hub<T>` classes, you can inherit from the `AbpHub` or `AbpHub<T>` which hve useful base properties like `CurrentUser`.
+Instead of the standard `Hub` and `Hub<T>` classes, you can inherit from the `AbpHub` or `AbpHub<T>` which have useful base properties like `CurrentUser`.
 
 Example:
 
@@ -235,3 +235,4 @@ Refer to the Microsoft's documentation to [host and scale](https://docs.microsof
 ## See Also
 
 * [Microsoft SignalR documentation](https://docs.microsoft.com/en-us/aspnet/core/signalr/introduction)
+* [Real-Time Messaging In A Distributed Architecture Using ABP, SingalR & RabbitMQ](https://volosoft.com/blog/RealTime-Messaging-Distributed-Architecture-Abp-SingalR-RabbitMQ)

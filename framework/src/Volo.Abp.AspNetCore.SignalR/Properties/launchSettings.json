@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:53900/",
-      "sslPort": 44362
+      "applicationUrl": "http://localhost:53611/",
+      "sslPort": 44331
     }
   },
   "profiles": {
@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Volo.Abp.SignalR": {
+    "Volo.Abp.AspNetCore.SignalR": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

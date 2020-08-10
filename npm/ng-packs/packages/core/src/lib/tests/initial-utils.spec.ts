@@ -1,9 +1,13 @@
 import { Component, Injector } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngxs/store';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { of } from 'rxjs';
 import { GetAppConfiguration } from '../actions';
-import { getInitialData, localeInitializer } from '../utils';
+import { CORE_OPTIONS } from '../tokens/options.token';
+import { checkAccessToken, getInitialData, localeInitializer } from '../utils';
+import * as multiTenancyUtils from '../utils/multi-tenancy-utils';
+import * as environmentUtils from '../utils/environment-utils';
 
 @Component({
   selector: 'abp-dummy',
@@ -15,17 +19,24 @@ describe('InitialUtils', () => {
   let spectator: Spectator<DummyComponent>;
   const createComponent = createComponentFactory({
     component: DummyComponent,
-    mocks: [Store],
+    mocks: [Store, OAuthService],
+    providers: [
+      { provide: CORE_OPTIONS, useValue: { environment: { oAuthConfig: { issuer: 'test' } } } },
+    ],
   });
 
   beforeEach(() => (spectator = createComponent()));
 
   describe('#getInitialData', () => {
     test('should dispatch GetAppConfiguration and return', async () => {
-      const injector = spectator.get(Injector);
+      const injector = spectator.inject(Injector);
       const injectorSpy = jest.spyOn(injector, 'get');
-      const store = spectator.get(Store);
+      const store = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store, 'dispatch');
+      const parseTenantFromUrlSpy = jest.spyOn(multiTenancyUtils, 'parseTenantFromUrl');
+      const getRemoteEnvSpy = jest.spyOn(environmentUtils, 'getRemoteEnv');
+      parseTenantFromUrlSpy.mockReturnValue(Promise.resolve());
+      getRemoteEnvSpy.mockReturnValue(Promise.resolve());
 
       injectorSpy.mockReturnValueOnce(store);
       injectorSpy.mockReturnValueOnce({ skipGetAppConfiguration: false });
@@ -40,29 +51,30 @@ describe('InitialUtils', () => {
 
   describe('#checkAccessToken', () => {
     test('should call logOut fn of OAuthService when token is valid and current user not found', async () => {
-      const injector = spectator.get(Injector);
+      const injector = spectator.inject(Injector);
       const injectorSpy = jest.spyOn(injector, 'get');
-      const store = spectator.get(Store);
-      const dispatchSpy = jest.spyOn(store, 'dispatch');
       const logOutFn = jest.fn();
 
-      injectorSpy.mockReturnValueOnce(store);
-      injectorSpy.mockReturnValueOnce({ skipGetAppConfiguration: false });
-      injectorSpy.mockReturnValueOnce({ hasValidAccessToken: () => true, logOut: logOutFn });
-      dispatchSpy.mockReturnValue(of({ currentUser: { id: null } }));
+      injectorSpy.mockReturnValue({ hasValidAccessToken: () => true, logOut: logOutFn });
 
-      getInitialData(injector)();
+      checkAccessToken(
+        {
+          selectSnapshot: () => false,
+        } as any,
+        injector,
+      );
       expect(logOutFn).toHaveBeenCalled();
     });
   });
 
   describe('#localeInitializer', () => {
     test('should resolve registerLocale', async () => {
-      const injector = spectator.get(Injector);
+      const injector = spectator.inject(Injector);
       const injectorSpy = jest.spyOn(injector, 'get');
-      const store = spectator.get(Store);
+      const store = spectator.inject(Store);
       store.selectSnapshot.andCallFake(selector => selector({ SessionState: { language: 'tr' } }));
-      injectorSpy.mockReturnValue(store);
+      injectorSpy.mockReturnValueOnce(store);
+      injectorSpy.mockReturnValueOnce({ cultureNameLocaleFileMap: {} });
       expect(typeof localeInitializer(injector)).toBe('function');
       expect(await localeInitializer(injector)()).toBe('resolved');
     });

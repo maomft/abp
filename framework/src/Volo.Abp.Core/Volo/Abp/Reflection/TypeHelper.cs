@@ -71,7 +71,7 @@ namespace Volo.Abp.Reflection
                 return true;
             }
 
-            if (includeNullables && IsNullable(type))
+            if (includeNullables && IsNullable(type) && type.GenericTypeArguments.Any())
             {
                 return IsPrimitiveExtendedInternal(type.GenericTypeArguments[0], includeEnums);
             }
@@ -197,7 +197,7 @@ namespace Volo.Abp.Reflection
                 return $"{genericType.FullName.Left(genericType.FullName.IndexOf('`'))}<{type.GenericTypeArguments.Select(GetFullNameHandlingNullableAndGenerics).JoinAsString(",")}>";
             }
 
-            return type.FullName;
+            return type.FullName ?? type.Name;
         }
 
         public static string GetSimplifiedName([NotNull] Type type)
@@ -295,8 +295,12 @@ namespace Volo.Abp.Reflection
             {
                 return "number";
             }
+            else if (type == typeof(object))
+            {
+                return "object";
+            }
 
-            return type.FullName;
+            return type.FullName ?? type.Name;
         }
 
         public static object ConvertFromString<TTargetType>(string value)
@@ -358,6 +362,16 @@ namespace Volo.Abp.Reflection
             return IsNullable(type)
                 ? type.GenericTypeArguments[0]
                 : type;
+        }
+
+        public static bool IsDefaultValue([CanBeNull] object obj)
+        {
+            if (obj == null)
+            {
+                return true;
+            }
+
+            return obj.Equals(GetDefaultValue(obj.GetType()));
         }
     }
 }

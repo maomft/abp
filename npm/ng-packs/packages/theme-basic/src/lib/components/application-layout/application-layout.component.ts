@@ -1,7 +1,6 @@
-import { eLayoutType, takeUntilDestroy } from '@abp/ng.core';
+import { eLayoutType, SubscriptionService } from '@abp/ng.core';
 import { collapseWithMargin, slideFromBottom } from '@abp/ng.theme.shared';
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { fromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { eThemeBasicComponents } from '../../enums/components';
@@ -10,6 +9,7 @@ import { eThemeBasicComponents } from '../../enums/components';
   selector: 'abp-layout-application',
   templateUrl: './application-layout.component.html',
   animations: [slideFromBottom, collapseWithMargin],
+  providers: [SubscriptionService],
 })
 export class ApplicationLayoutComponent implements AfterViewInit, OnDestroy {
   // required for dynamic component
@@ -25,7 +25,7 @@ export class ApplicationLayoutComponent implements AfterViewInit, OnDestroy {
 
   navItemsComponentKey = eThemeBasicComponents.NavItems;
 
-  constructor(private store: Store) {}
+  constructor(private subscription: SubscriptionService) {}
 
   private checkWindowWidth() {
     setTimeout(() => {
@@ -46,11 +46,8 @@ export class ApplicationLayoutComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.checkWindowWidth();
 
-    fromEvent(window, 'resize')
-      .pipe(takeUntilDestroy(this), debounceTime(150))
-      .subscribe(() => {
-        this.checkWindowWidth();
-      });
+    const resize$ = fromEvent(window, 'resize').pipe(debounceTime(150));
+    this.subscription.addOne(resize$, () => this.checkWindowWidth());
   }
 
   ngOnDestroy() {}

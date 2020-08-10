@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -118,7 +119,7 @@ namespace Volo.Abp.EntityFrameworkCore
                 modelBuilder.SetDatabaseProvider(provider.Value);
             }
         }
-        
+
         protected virtual EfCoreDatabaseProvider? GetDatabaseProviderOrNull(ModelBuilder modelBuilder)
         {
             switch (Database.ProviderName)
@@ -129,6 +130,7 @@ namespace Volo.Abp.EntityFrameworkCore
                     return EfCoreDatabaseProvider.PostgreSql;
                 case "Pomelo.EntityFrameworkCore.MySql":
                     return EfCoreDatabaseProvider.MySql;
+                case "Oracle.EntityFrameworkCore":
                 case "Devart.Data.Oracle.Entity.EFCore":
                     return EfCoreDatabaseProvider.Oracle;
                 case "Microsoft.EntityFrameworkCore.Sqlite":
@@ -181,13 +183,21 @@ namespace Volo.Abp.EntityFrameworkCore
             }
         }
 
+        /// <summary>
+        /// This method will call the DbContext <see cref="SaveChangesAsync(bool, CancellationToken)"/> method directly of EF Core, which doesn't apply concepts of abp.
+        /// </summary>
+        public virtual Task<int> SaveChangesOnDbContextAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
         public virtual void Initialize(AbpEfCoreDbContextInitializationContext initializationContext)
         {
             if (initializationContext.UnitOfWork.Options.Timeout.HasValue &&
                 Database.IsRelational() &&
                 !Database.GetCommandTimeout().HasValue)
             {
-                Database.SetCommandTimeout(initializationContext.UnitOfWork.Options.Timeout.Value.TotalSeconds.To<int>());
+                Database.SetCommandTimeout(TimeSpan.FromMilliseconds(initializationContext.UnitOfWork.Options.Timeout.Value));
             }
 
             ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
@@ -313,7 +323,25 @@ namespace Volo.Abp.EntityFrameworkCore
                     continue;
                 }
 
-                entry.Property(property.Name).CurrentValue = entity.GetProperty(property.Name);
+                var entryProperty = entry.Property(property.Name);
+                var entityProperty = entity.GetProperty(property.Name);
+                if (entityProperty == null)
+                {
+                    entryProperty.CurrentValue = null;
+                    continue;
+                }
+
+                if (entryProperty.Metadata.ClrType == entityProperty.GetType())
+                {
+                    entryProperty.CurrentValue = entityProperty;
+                }
+                else
+                {
+                    if (TypeHelper.IsPrimitiveExtended(entryProperty.Metadata.ClrType, includeEnums: true))
+                    {
+                        entryProperty.CurrentValue = Convert.ChangeType(entityProperty, entryProperty.Metadata.ClrType, CultureInfo.InvariantCulture);
+                    }
+                }
             }
         }
 
@@ -486,6 +514,11 @@ namespace Volo.Abp.EntityFrameworkCore
             where TEntity : class
         {
             if (mutableEntityType.IsOwned())
+            {
+                return;
+            }
+
+            if (!typeof(IEntity).IsAssignableFrom(typeof(TEntity)))
             {
                 return;
             }

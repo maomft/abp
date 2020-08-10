@@ -115,7 +115,7 @@ public class MessagingHub : Hub
 }
 ````
 
-`MessasingHub` 集线器的路由为 `/signalr-hubs/messasing`:
+`MessagingHub` 集线器的路由为 `/signalr-hubs/messaging`:
 
 * 添加了标准 `/signalr-hubs/` 前缀.
 * 使用**驼峰命名**集线器名称,不包含 `Hub` 后缀.
@@ -123,7 +123,7 @@ public class MessagingHub : Hub
 如果你想指定路由,你可以使用 `HubRoute` attribute:
 
 ````csharp
-[HubRoute("/my-messasing-hub")]
+[HubRoute("/my-messaging-hub")]
 public class MessagingHub : Hub
 {
     //...
@@ -235,3 +235,4 @@ ABP框架不会更改SignalR. 就像在其他ASP.NET Core应用程序中一样,�
 ## 另请参阅
 
 * [微软SignalR文档](https://docs.microsoft.com/zh-cn/aspnet/core/signalr/introduction)
+* [使用ABP,SignalR和RabbitMQ在分布式体系结构中的实时消息传递](https://volosoft.com/blog/RealTime-Messaging-Distributed-Architecture-Abp-SingalR-RabbitMQ)

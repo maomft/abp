@@ -27,7 +27,7 @@ abp add-module Volo.Abp.BlobStoring.Database
 
 这里是此提供程序定义的所有包:
 
-* [Volo.Abp.BlobStoring.Database.Domain.Shared](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Domain.Shared)
+* [Volo.Abp.BlobStoring.Database.Domain.Shared](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.Domain.Shared)
 * [Volo.Abp.BlobStoring.Database.Domain](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.Domain)
 * [Volo.Abp.BlobStoring.Database.EntityFrameworkCore](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.EntityFrameworkCore)
 * [Volo.Abp.BlobStoring.Database.MongoDB](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.MongoDB)
@@ -52,6 +52,8 @@ abp add-module Volo.Abp.BlobStoring.Database
 如果要将BLOB存储到单独的数据库,请在配置文件(`appsettings.json`)中将 `AbpBlobStoring` 用作连接字符串名称. 请阅读[EF Core Migrations](Entity-Framework-Core-Migrations.md)文档了解如何为所需模块创建和使用其他数据库.
 
 ### 配置容器
+
+如果只使用数据库存储提供程序,则不需要手动配置,因为它是自动完成的. 如果使用多个存储提供程序,可能需要对其进行配置.
 
 如同[BLOB存储文档](Blob-Storing.md)所述,配置是在[模块](Module-Development-Basics.md)类的 `ConfigureServices` 方法完成的.
 

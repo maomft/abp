@@ -27,7 +27,7 @@ This command adds all the NuGet packages to corresponding layers of your solutio
 
 Here, all the NuGet packages defined by this provider;
 
-* [Volo.Abp.BlobStoring.Database.Domain.Shared](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Domain.Shared)
+* [Volo.Abp.BlobStoring.Database.Domain.Shared](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.Domain.Shared)
 * [Volo.Abp.BlobStoring.Database.Domain](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.Domain)
 * [Volo.Abp.BlobStoring.Database.EntityFrameworkCore](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.EntityFrameworkCore)
 * [Volo.Abp.BlobStoring.Database.MongoDB](https://www.nuget.org/packages/Volo.Abp.BlobStoring.Database.MongoDB)
@@ -54,6 +54,8 @@ If you will use your `Default` connection string, you don't need to any addition
 If you want to use a separate database for BLOB storage, use the `AbpBlobStoring` as the [connection string](Connection-Strings.md) name in your configuration file (`appsettings.json`). In this case, also read the [EF Core Migrations](Entity-Framework-Core-Migrations.md) document to learn how to create and use a different database for a desired module.
 
 ### Configuring the Containers
+
+If you are using only the database storage provider, you don't need to manually configure it, since it is automatically done. If you are using multiple storage providers, you may want to configure it.
 
 Configuration is done in the `ConfigureServices` method of your [module](Module-Development-Basics.md) class, as explained in the [BLOB Storing document](Blob-Storing.md).
 

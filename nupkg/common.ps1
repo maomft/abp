@@ -58,7 +58,12 @@ $projects = (
     "framework/src/Volo.Abp.BackgroundWorkers.Quartz",
     "framework/src/Volo.Abp.BlobStoring",
     "framework/src/Volo.Abp.BlobStoring.FileSystem",
+    "framework/src/Volo.Abp.BlobStoring.Aliyun",
+    "framework/src/Volo.Abp.BlobStoring.Azure",
+    "framework/src/Volo.Abp.BlobStoring.Minio",
+    "framework/src/Volo.Abp.BlobStoring.Aws",
     "framework/src/Volo.Abp.Caching",
+    "framework/src/Volo.Abp.Caching.StackExchangeRedis",
     "framework/src/Volo.Abp.Castle.Core",
     "framework/src/Volo.Abp.Cli.Core",
     "framework/src/Volo.Abp.Cli",
@@ -72,6 +77,7 @@ $projects = (
     "framework/src/Volo.Abp.Emailing",
     "framework/src/Volo.Abp.EntityFrameworkCore",
     "framework/src/Volo.Abp.EntityFrameworkCore.MySQL",
+    "framework/src/Volo.Abp.EntityFrameworkCore.Oracle",
     "framework/src/Volo.Abp.EntityFrameworkCore.Oracle.Devart",
     "framework/src/Volo.Abp.EntityFrameworkCore.PostgreSql",
     "framework/src/Volo.Abp.EntityFrameworkCore.Sqlite",
@@ -138,6 +144,7 @@ $projects = (
     "modules/background-jobs/src/Volo.Abp.BackgroundJobs.MongoDB",
 
     # modules/blogging
+    "modules/blogging/src/Volo.Blogging.Application.Contracts.Shared",
     "modules/blogging/src/Volo.Blogging.Application.Contracts",
     "modules/blogging/src/Volo.Blogging.Application",
     "modules/blogging/src/Volo.Blogging.Domain",
@@ -147,6 +154,11 @@ $projects = (
     "modules/blogging/src/Volo.Blogging.HttpApi",
     "modules/blogging/src/Volo.Blogging.MongoDB",
     "modules/blogging/src/Volo.Blogging.Web",
+    "modules/blogging/src/Volo.Blogging.Admin.Application",
+    "modules/blogging/src/Volo.Blogging.Admin.Application.Contracts",
+    "modules/blogging/src/Volo.Blogging.Admin.HttpApi",
+    "modules/blogging/src/Volo.Blogging.Admin.HttpApi.Client",
+    "modules/blogging/src/Volo.Blogging.Admin.Web",
 
     # modules/client-simulation
     "modules/client-simulation/src/Volo.ClientSimulation",
